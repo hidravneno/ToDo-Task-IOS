@@ -10,9 +10,22 @@
 		E53EFE222EE9111800A9709F /* ToDo Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ToDo Task.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E53EFE372EE9172B00A9709F /* Exceptions for "ToDo Task" folder in "ToDo Task" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Untitled.swift,
+			);
+			target = E53EFE212EE9111800A9709F /* ToDo Task */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E53EFE242EE9111800A9709F /* ToDo Task */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E53EFE372EE9172B00A9709F /* Exceptions for "ToDo Task" folder in "ToDo Task" target */,
+			);
 			path = "ToDo Task";
 			sourceTree = "<group>";
 		};
