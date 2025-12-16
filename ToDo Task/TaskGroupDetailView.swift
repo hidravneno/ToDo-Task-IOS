@@ -9,25 +9,33 @@ import SwiftUI
 
 struct TaskGroupDetailView: View {
     @Binding var groups: TaskGroup
+    @Environment(\.horizontalSizeClass) var sizeClass
     
     var body: some View {
-        List {
-            ForEach($groups.tasks) { $task in
-                HStack {
-                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(task.isCompleted ? .cyan : .gray)
-                        .onTapGesture {
-                            withAnimation {
-                                task.isCompleted.toggle()
-                            }
-                        }
-                    
-                    TextField("Task Title", text: $task.title)
-                        .strikethrough(task.isCompleted)
-                }
+        VStack{
+            
+            if sizeClass == .regular {
+                GroupStatsView(tasks: groups.tasks)
+                    .padding(.top)
             }
-            .onDelete { index in
-                groups.tasks.remove(atOffsets: index)
+            List {
+                ForEach($groups.tasks) { $task in
+                    HStack {
+                        Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(task.isCompleted ? .cyan : .gray)
+                            .onTapGesture {
+                                withAnimation {
+                                    task.isCompleted.toggle()
+                                }
+                            }
+                        
+                        TextField("Task Title", text: $task.title)
+                            .strikethrough(task.isCompleted)
+                    }
+                }
+                .onDelete { index in
+                    groups.tasks.remove(atOffsets: index)
+                }
             }
         }
         .navigationTitle(groups.title)
