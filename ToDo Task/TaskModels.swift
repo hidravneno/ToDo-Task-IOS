@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct TaskItem: Identifiable, Hashable {
-    let id = UUID()
+struct TaskItem: Identifiable, Hashable, Codable {
+    var id = UUID()
     var title: String
     var isCompleted: Bool = false
 }
 
-struct TaskGroup: Identifiable, Hashable {
-    let id = UUID()
+struct TaskGroup: Identifiable, Hashable, Codable {
+    var id = UUID()
     var title: String
     var symbolName: String
     var tasks: [TaskItem]

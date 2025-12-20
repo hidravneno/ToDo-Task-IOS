@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+  <file original="ToDo Task/Localizable.xcstrings" source-language="en" target-language="en" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="26.0.1" build-num="17A400"/>
+    </header>
+    <body>
+      <trans-unit id="%lld / %lld Completed" xml:space="preserve">
+        <source>%1$lld / %2$lld Completed</source>
+        <target state="new">%1$lld / %2$lld Completed</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="%lld%%" xml:space="preserve">
+        <source>%lld%%</source>
+        <target state="new">%lld%%</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Add Task" xml:space="preserve">
+        <source>Add Task</source>
+        <target state="new">Add Task</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Automatic" xml:space="preserve">
+        <source>Automatic</source>
+        <target state="new">Automatic</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="new">Cancel</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Dark" xml:space="preserve">
+        <source>Dark</source>
+        <target state="new">Dark</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Group Name" xml:space="preserve">
+        <source>Group Name</source>
+        <target state="new">Group Name</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Insert the name of your group" xml:space="preserve">
+        <source>Insert the name of your group</source>
+        <target state="new">Insert the name of your group</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Light" xml:space="preserve">
+        <source>Light</source>
+        <target state="new">Light</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="New Group Creator" xml:space="preserve">
+        <source>New Group Creator</source>
+        <target state="new">New Group Creator</target>
+        <note from="auto-generated">The title of the view where a user can create a new task group.</note>
+      </trans-unit>
+      <trans-unit id="Save" xml:space="preserve">
+        <source>Save</source>
+        <target state="new">Save</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Select Icon" xml:space="preserve">
+        <source>Select Icon</source>
+        <target state="new">Select Icon</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Select a Group" xml:space="preserve">
+        <source>Select a Group</source>
+        <target state="new">Select a Group</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Task Progress" xml:space="preserve">
+        <source>Task Progress</source>
+        <target state="new">Task Progress</target>
+        <note from="auto-generated">A label displayed above the progress of tasks in a group.</note>
+      </trans-unit>
+      <trans-unit id="Task Title" xml:space="preserve">
+        <source>Task Title</source>
+        <target state="new">Task Title</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="ToDo APP" xml:space="preserve">
+        <source>ToDo APP</source>
+        <target state="new">ToDo APP</target>
+        <note/>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="ToDo Task/ToDo Task-InfoPlist.xcstrings" source-language="en" target-language="en" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="26.0.1" build-num="17A400"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>ToDo Task</source>
+        <target state="new">ToDo Task</target>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
