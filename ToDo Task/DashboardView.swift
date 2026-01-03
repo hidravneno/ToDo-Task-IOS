@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct DashboardView: View {
     
@@ -117,6 +118,10 @@ struct SettingsView: View {
                     .pickerStyle(.inline)
                 }
                 
+                Section("Regional Formats") {
+                    LocalizedFormatsView()
+                }
+                
                 Section {
                     HStack {
                         Text("Version")
@@ -136,5 +141,102 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Localized Formats View
+struct LocalizedFormatsView: View {
+    @State private var currentDate = Date()
+    let sampleNumber = 1234567.89
+    let completedTasks = 42
+    let totalTasks = 100
+    
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Current Date")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(currentDate, formatter: dateFormatter)
+                    .font(.body)
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Current Time")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(currentDate, formatter: timeFormatter)
+                    .font(.body)
+                    .monospacedDigit()
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Sample Number")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(formatNumber(sampleNumber))
+                    .font(.body)
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Task Completion")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(formatPercentage(Double(completedTasks) / Double(totalTasks)))
+                    .font(.body)
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Current Locale")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("\(Locale.current.identifier)")
+                    .font(.body)
+                    .foregroundStyle(.blue)
+            }
+        }
+        .onReceive(timer) { _ in
+            currentDate = Date()
+        }
+    }
+    
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.locale = Locale.current
+        return formatter
+    }
+    
+    private var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.locale = Locale.current
+        return formatter
+    }
+    
+    private func formatNumber(_ number: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale.current
+        formatter.maximumFractionDigits = 2
+        return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
+    }
+    
+    private func formatPercentage(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.locale = Locale.current
+        formatter.maximumFractionDigits = 1
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value * 100)%"
     }
 }
