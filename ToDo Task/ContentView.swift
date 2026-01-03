@@ -8,84 +8,61 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var taskGroups: [TaskGroup] = []
-    @State private var selectedGroup: TaskGroup? // selected group
-    @State private var columnVisibility: NavigationSplitViewVisibility = .all // navigation side panel
-    @State private var isShowingAddGroup = false
-    @State private var colorScheme: ColorScheme? = nil // nil = automatic
+    @State private var profiles: [Profile] = []
+    @AppStorage("savedTheme") private var savedTheme: String = "auto"
+    @State private var colorScheme: ColorScheme? = nil
     @Environment(\.scenePhase) private var scenePhase
     
-    let saveKey = "savedTaskGroups"
-    let themeKey = "savedTheme"
-
+    let saveKey = "savedProfile"
+    @State private var path = NavigationPath()
+    let columns = [GridItem(.adaptive(minimum: 150))]
+    
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            // SIDEBAR
-            List(selection: $selectedGroup) {
-                ForEach(taskGroups) { group in
-                    NavigationLink(value: group) {
-                        Label(group.title, systemImage: group.symbolName)
-                    }
-                }
-            }
-            .navigationTitle("ToDo APP")
-            .listStyle(.sidebar)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        isShowingAddGroup = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
-                
-                ToolbarItem(placement: .navigation) {
-                    Menu {
-                        Button {
-                            colorScheme = nil
-                            UserDefaults.standard.set("auto", forKey: themeKey)
-                        } label: {
-                            Label("Automatic", systemImage: "circle.lefthalf.filled")
+        NavigationStack(path: $path) {
+            ScrollView {
+                VStack(spacing: 20) {
+                    Text("Select the working profile")
+                        .font(.largeTitle.bold())
+                        .padding(.top, 20)
+                    
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach($profiles) { $profile in
+                            NavigationLink(value: profile.id) {
+                                VStack(spacing: 8) {
+                                    Image(profile.profileImage)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 80, height: 80)
+                                        .clipShape(.circle)
+                                    Text(profile.name)
+                                        .font(.headline)
+                                }
+                                .padding()
+                                .background(Color.gray.opacity(0.1))
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        
-                        Button {
-                            colorScheme = .light
-                            UserDefaults.standard.set("light", forKey: themeKey)
-                        } label: {
-                            Label("Light", systemImage: "sun.max")
-                        }
-                        
-                        Button {
-                            colorScheme = .dark
-                            UserDefaults.standard.set("dark", forKey: themeKey)
-                        } label: {
-                            Label("Dark", systemImage: "moon")
-                        }
-                    } label: {
-                        Image(systemName: "circle.lefthalf.filled")
                     }
+                    .padding(.horizontal)
                 }
+                .padding(.bottom, 20)
             }
-        } detail: {
-            if let group = selectedGroup {
-                if let index = taskGroups.firstIndex(where: { $0.id == group.id }) {
-                    TaskGroupDetailView(groups: $taskGroups[index])
+            .navigationTitle("Home")
+            .navigationBarHidden(true)
+            .navigationDestination(for: UUID.self) { profileId in
+                if let index = profiles.firstIndex(where: { $0.id == profileId }) {
+                    DashboardView(profile: $profiles[index])
+                        .navigationBarBackButtonHidden(true)
                 }
-            } else {
-                ContentUnavailableView("Select a Group", systemImage: "sidebar.left")
-            }
-        }
-        .sheet(isPresented: $isShowingAddGroup) {
-            NewGroupView { newGroup in
-                taskGroups.append(newGroup)
-                selectedGroup = newGroup // Automatically show up the details of the new group i created
             }
         }
         .onAppear {
             loadData()
-            // Load theme
-            let theme = UserDefaults.standard.string(forKey: themeKey) ?? "auto"
-            colorScheme = theme == "dark" ? .dark : theme == "light" ? .light : nil
+            applyTheme()
+        }
+        .onChange(of: savedTheme) { _, _ in
+            applyTheme()
         }
         .onChange(of: scenePhase) { oldValue, newValue in
             if newValue == .active {
@@ -101,20 +78,30 @@ struct ContentView: View {
     }
     
     func saveData() {
-        if let encodedData = try? JSONEncoder().encode(taskGroups) {
+        if let encodedData = try? JSONEncoder().encode(profiles) {
             UserDefaults.standard.set(encodedData, forKey: saveKey)
         }
     }
     
     func loadData() {
         if let savedData = UserDefaults.standard.data(forKey: saveKey) {
-            if let decodedGroups = try? JSONDecoder().decode([TaskGroup].self, from: savedData) {
-                taskGroups = decodedGroups
+            if let decodedProfiles = try? JSONDecoder().decode([Profile].self, from: savedData) {
+                profiles = decodedProfiles
                 return
             }
         }
-        
-        // show mock data for dev purposes
-        taskGroups = TaskGroup.sampleData
+        // Show mock data for dev purposes
+        profiles = Profile.sample
+    }
+    
+    private func applyTheme() {
+        switch savedTheme {
+        case "dark":
+            colorScheme = .dark
+        case "light":
+            colorScheme = .light
+        default:
+            colorScheme = nil // Automatic
+        }
     }
 }

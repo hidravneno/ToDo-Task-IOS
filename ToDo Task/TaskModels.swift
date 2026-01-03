@@ -20,6 +20,13 @@ struct TaskGroup: Identifiable, Hashable, Codable {
     var tasks: [TaskItem]
 }
 
+struct Profile: Identifiable, Hashable, Codable {
+    var id = UUID()
+    var name: String
+    var profileImage: String
+    var groups: [TaskGroup]
+}
+
 
 // MOCK DATA
 extension TaskGroup {
@@ -33,5 +40,13 @@ extension TaskGroup {
             TaskItem(title: "Walk the dog", isCompleted: true ),
             TaskItem(title: "Clean the kitchen")
         ])
+    ]
+}
+
+extension Profile {
+    static let sample: [Profile] = [
+        Profile(name: "Professor", profileImage: "professor", groups: TaskGroup.sampleData),
+        Profile(name: "Student", profileImage: "student", groups:[])
+
     ]
 }
