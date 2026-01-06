@@ -94,6 +94,7 @@
 				es,
 				"fr-CA",
 				pl,
+				ar,
 			);
 			mainGroup = E53EFE192EE9111800A9709F;
 			minimizedProjectReferenceProxies = 1;

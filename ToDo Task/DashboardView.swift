@@ -16,6 +16,7 @@ struct DashboardView: View {
     @State private var isShowingAddGroup = false
     @State private var isShowingSettings = false
     @Environment(\.dismiss) var dismiss
+    @Environment(\.culturalConfig) var culturalConfig
     
     // Theme state
     @AppStorage("savedTheme") private var savedTheme: String = "auto"
@@ -27,6 +28,7 @@ struct DashboardView: View {
                 ForEach(profile.groups) { group in
                     NavigationLink(value: group) {
                         Label(group.title, systemImage: group.symbolName)
+                            .foregroundColor(culturalConfig.accentColor)
                     }
                 }
             }
@@ -78,6 +80,7 @@ struct DashboardView: View {
             SettingsView()
         }
         .preferredColorScheme(colorScheme)
+        .environment(\.culturalConfig, CulturalConfiguration())
         .onAppear {
             applyTheme()
         }
@@ -93,7 +96,7 @@ struct DashboardView: View {
         case "light":
             colorScheme = .light
         default:
-            colorScheme = nil // Automatic
+            colorScheme = nil
         }
     }
 }
@@ -102,6 +105,7 @@ struct DashboardView: View {
 struct SettingsView: View {
     @AppStorage("savedTheme") private var savedTheme: String = "auto"
     @Environment(\.dismiss) var dismiss
+    @Environment(\.culturalConfig) var culturalConfig
     
     var body: some View {
         NavigationStack {
@@ -122,6 +126,23 @@ struct SettingsView: View {
                     LocalizedFormatsView()
                 }
                 
+                Section("Cultural Settings") {
+                    HStack {
+                        Text("Layout Direction")
+                        Spacer()
+                        Text(culturalConfig.isRTL ? "Right to Left" : "Left to Right")
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    HStack {
+                        Text("Accent Color")
+                        Spacer()
+                        Circle()
+                            .fill(culturalConfig.accentColor)
+                            .frame(width: 20, height: 20)
+                    }
+                }
+                
                 Section {
                     HStack {
                         Text("Version")
@@ -134,7 +155,7 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
+                ToolbarItemGroup(placement: culturalConfig.buttonOrder == .cancelRight ? .confirmationAction : .cancellationAction) {
                     Button("Done") {
                         dismiss()
                     }
@@ -147,6 +168,8 @@ struct SettingsView: View {
 // MARK: - Localized Formats View
 struct LocalizedFormatsView: View {
     @State private var currentDate = Date()
+    @Environment(\.culturalConfig) var culturalConfig
+    
     let sampleNumber = 1234567.89
     let completedTasks = 42
     let totalTasks = 100
@@ -160,7 +183,7 @@ struct LocalizedFormatsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(currentDate, formatter: dateFormatter)
-                    .font(.body)
+                    .font(culturalConfig.preferredFont)
             }
             
             Divider()
@@ -170,7 +193,7 @@ struct LocalizedFormatsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(currentDate, formatter: timeFormatter)
-                    .font(.body)
+                    .font(culturalConfig.preferredFont)
                     .monospacedDigit()
             }
             
@@ -181,7 +204,7 @@ struct LocalizedFormatsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(formatNumber(sampleNumber))
-                    .font(.body)
+                    .font(culturalConfig.preferredFont)
             }
             
             Divider()
@@ -191,7 +214,7 @@ struct LocalizedFormatsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(formatPercentage(Double(completedTasks) / Double(totalTasks)))
-                    .font(.body)
+                    .font(culturalConfig.preferredFont)
             }
             
             Divider()
@@ -201,8 +224,8 @@ struct LocalizedFormatsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text("\(Locale.current.identifier)")
-                    .font(.body)
-                    .foregroundStyle(.blue)
+                    .font(culturalConfig.preferredFont)
+                    .foregroundStyle(culturalConfig.accentColor)
             }
         }
         .onReceive(timer) { _ in

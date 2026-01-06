@@ -10,27 +10,30 @@ import SwiftUI
 struct TaskGroupDetailView: View {
     @Binding var groups: TaskGroup
     @Environment(\.horizontalSizeClass) var sizeClass
-    
+    @Environment(\.culturalConfig) var culturalConfig
+
     var body: some View {
-        VStack{
-            
+        VStack {
             if sizeClass == .regular {
                 GroupStatsView(tasks: groups.tasks)
                     .padding(.top)
             }
+
             List {
                 ForEach($groups.tasks) { $task in
                     HStack {
                         Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(task.isCompleted ? .cyan : .gray)
+                            .foregroundStyle(task.isCompleted ? culturalConfig.accentColor : .gray)
                             .onTapGesture {
                                 withAnimation {
                                     task.isCompleted.toggle()
                                 }
                             }
-                        
+
                         TextField("Task Title", text: $task.title)
+                            .font(culturalConfig.preferredFont)
                             .strikethrough(task.isCompleted)
+                            .foregroundStyle(task.isCompleted ? .secondary : .primary)
                     }
                 }
                 .onDelete { index in
@@ -40,10 +43,15 @@ struct TaskGroupDetailView: View {
         }
         .navigationTitle(groups.title)
         .toolbar {
-            Button("Add Task") {
-                withAnimation {
-                    groups.tasks.append(TaskItem(title: ""))
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    withAnimation {
+                        groups.tasks.append(TaskItem(title: ""))
+                    }
+                } label: {
+                    Label("Add Task", systemImage: "plus")
                 }
+                .tint(culturalConfig.accentColor)
             }
         }
     }
