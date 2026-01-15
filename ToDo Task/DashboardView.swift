@@ -2,7 +2,7 @@
 //  DashboardView.swift
 //  ToDo Task
 //
-//  Created by francisco eduardo aramburo reyes on 20/12/25.
+//  Con límites premium para grupos
 //
 
 import SwiftUI
@@ -15,8 +15,11 @@ struct DashboardView: View {
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @State private var isShowingAddGroup = false
     @State private var isShowingSettings = false
+    @State private var showPremiumView = false
+    @State private var showGroupLimitAlert = false
     @Environment(\.dismiss) var dismiss
     @Environment(\.culturalConfig) var culturalConfig
+    @ObservedObject private var premiumManager = PremiumManager.shared
     
     // Theme state
     @AppStorage("savedTheme") private var savedTheme: String = "auto"
@@ -25,10 +28,46 @@ struct DashboardView: View {
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             List(selection: $selectedGroup) {
-                ForEach(profile.groups) { group in
-                    NavigationLink(value: group) {
-                        Label(group.title, systemImage: group.symbolName)
-                            .foregroundColor(culturalConfig.accentColor)
+                // Premium status banner (solo si no es premium)
+                if !premiumManager.isPremium {
+                    Section {
+                        PremiumBannerButton {
+                            showPremiumView = true
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                    
+                    // Group counter
+                    Section {
+                        GroupCounterBadge(
+                            currentCount: profile.groups.count,
+                            maxCount: premiumManager.freeGroupsLimit
+                        )
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
+                }
+                
+                // Groups list
+                Section {
+                    ForEach(profile.groups) { group in
+                        NavigationLink(value: group) {
+                            HStack {
+                                Label(group.title, systemImage: group.symbolName)
+                                    .foregroundColor(culturalConfig.accentColor)
+                                
+                                Spacer()
+                                
+                                // Task count badge
+                                Text("\(group.tasks.count)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.gray.opacity(0.2))
+                                    .clipShape(Capsule())
+                            }
+                        }
                     }
                 }
             }
@@ -48,9 +87,16 @@ struct DashboardView: View {
                 
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        isShowingAddGroup = true
+                        handleAddGroup()
                     } label: {
-                        Image(systemName: "plus")
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus")
+                            if !premiumManager.isPremium && profile.groups.count >= premiumManager.freeGroupsLimit {
+                                Image(systemName: "crown.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(.orange)
+                            }
+                        }
                     }
                 }
                 
@@ -58,7 +104,20 @@ struct DashboardView: View {
                     Button {
                         isShowingSettings = true
                     } label: {
-                        Image(systemName: "gearshape")
+                        HStack(spacing: 4) {
+                            Image(systemName: "gearshape")
+                            if premiumManager.isPremium {
+                                Image(systemName: "crown.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [.yellow, .orange],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                            }
+                        }
                     }
                 }
             }
@@ -77,7 +136,27 @@ struct DashboardView: View {
             }
         }
         .sheet(isPresented: $isShowingSettings) {
-            SettingsView()
+            SettingsView(onShowPremium: {
+                isShowingSettings = false
+                showPremiumView = true
+            })
+        }
+        .sheet(isPresented: $showPremiumView) {
+            SimplePremiumView()
+        }
+        .overlay {
+            if showGroupLimitAlert {
+                GroupLimitAlert(
+                    onUpgrade: {
+                        showGroupLimitAlert = false
+                        showPremiumView = true
+                    },
+                    onDismiss: {
+                        showGroupLimitAlert = false
+                    }
+                )
+                .transition(.scale.combined(with: .opacity))
+            }
         }
         .preferredColorScheme(colorScheme)
         .environment(\.culturalConfig, CulturalConfiguration())
@@ -86,6 +165,16 @@ struct DashboardView: View {
         }
         .onChange(of: savedTheme) { _, _ in
             applyTheme()
+        }
+    }
+    
+    private func handleAddGroup() {
+        if premiumManager.canCreateGroup(currentCount: profile.groups.count) {
+            isShowingAddGroup = true
+        } else {
+            withAnimation {
+                showGroupLimitAlert = true
+            }
         }
     }
     
@@ -101,15 +190,210 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Settings View
+// MARK: - Premium Banner Button
+struct PremiumBannerButton: View {
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Image(systemName: "crown.fill")
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.yellow, .orange],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Upgrade to Premium")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("Unlimited groups & tasks")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+// MARK: - Group Counter Badge
+struct GroupCounterBadge: View {
+    let currentCount: Int
+    let maxCount: Int
+    
+    var isNearLimit: Bool {
+        currentCount >= maxCount - 1
+    }
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "folder.badge.plus")
+                .font(.caption)
+            
+            Text("\(currentCount)/\(maxCount) Groups")
+                .font(.caption.bold())
+            
+            if currentCount >= maxCount {
+                Image(systemName: "crown.fill")
+                    .font(.caption2)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.yellow, .orange],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(isNearLimit ? Color.orange.opacity(0.15) : Color.gray.opacity(0.15))
+        .foregroundStyle(isNearLimit ? .orange : .secondary)
+        .cornerRadius(20)
+    }
+}
+
+// MARK: - Group Limit Alert
+struct GroupLimitAlert: View {
+    let onUpgrade: () -> Void
+    let onDismiss: () -> Void
+    
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    onDismiss()
+                }
+            
+            VStack(spacing: 24) {
+                Image(systemName: "folder.fill.badge.plus")
+                    .font(.system(size: 60))
+                    .foregroundStyle(.orange)
+                
+                VStack(spacing: 8) {
+                    Text("Group Limit Reached")
+                        .font(.title2.bold())
+                    
+                    Text("You've reached the maximum of 5 groups on the free plan. Upgrade to Premium for unlimited groups!")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+                
+                VStack(spacing: 12) {
+                    Button {
+                        onUpgrade()
+                    } label: {
+                        HStack {
+                            Image(systemName: "crown.fill")
+                            Text("Upgrade to Premium")
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .background(
+                            LinearGradient(
+                                colors: [.cyan, .blue],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(12)
+                    }
+                    
+                    Button {
+                        onDismiss()
+                    } label: {
+                        Text("Maybe Later")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .padding(30)
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(20)
+            .shadow(radius: 20)
+            .padding(.horizontal, 40)
+        }
+    }
+}
+
+// MARK: - Settings View Actualizado
 struct SettingsView: View {
     @AppStorage("savedTheme") private var savedTheme: String = "auto"
     @Environment(\.dismiss) var dismiss
     @Environment(\.culturalConfig) var culturalConfig
+    @ObservedObject private var premiumManager = PremiumManager.shared
+    var onShowPremium: () -> Void
     
     var body: some View {
         NavigationStack {
             Form {
+                // Premium section
+                if premiumManager.isPremium {
+                    Section {
+                        HStack {
+                            Image(systemName: "crown.fill")
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.yellow, .orange],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                            Text("Premium Active")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                    }
+                } else {
+                    Section {
+                        Button {
+                            onShowPremium()
+                        } label: {
+                            HStack {
+                                Image(systemName: "crown.fill")
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [.yellow, .orange],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Upgrade to Premium")
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    
+                                    Text("Unlock unlimited features")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+                
                 Section("Appearance") {
                     Picker("Theme", selection: $savedTheme) {
                         Label("Automatic", systemImage: "circle.lefthalf.filled")
@@ -151,6 +435,22 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                
+                // Development toggle
+                #if DEBUG
+                Section("Development") {
+                    Button {
+                        premiumManager.togglePremium()
+                    } label: {
+                        HStack {
+                            Text(premiumManager.isPremium ? "Deactivate Premium" : "Activate Premium")
+                            Spacer()
+                            Image(systemName: premiumManager.isPremium ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(premiumManager.isPremium ? .green : .gray)
+                        }
+                    }
+                }
+                #endif
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)

@@ -5,8 +5,6 @@
 //  Created by francisco eduardo aramburo reyes on 13/01/26.
 //
 
-
-
 import SwiftUI
 import Combine
 
@@ -15,8 +13,9 @@ class PremiumManager: ObservableObject {
     
     @Published var isPremium: Bool = false
     
-    // Profile limit for free users (public for access)
+    // Limits for free users
     public let freeProfilesLimit = 3
+    public let freeGroupsLimit = 5
     
     private let premiumKey = "isPremiumUser"
     
@@ -36,6 +35,14 @@ class PremiumManager: ObservableObject {
             return true // Premium = unlimited profiles
         }
         return currentCount < freeProfilesLimit // Free = max 3
+    }
+    
+    // Check if the user can create more groups
+    func canCreateGroup(currentCount: Int) -> Bool {
+        if isPremium {
+            return true // Premium = unlimited groups
+        }
+        return currentCount < freeGroupsLimit // Free = max 5
     }
     
     // Activate premium (simulated for development)
