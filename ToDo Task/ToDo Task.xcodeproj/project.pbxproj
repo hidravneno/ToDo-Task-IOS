@@ -18,8 +18,6 @@
 
 /* Begin PBXFileReference section */
 		E53EFE222EE9111800A9709F /* ToDo Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ToDo Task.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E540C10D2F17414800E16025 /* ToDo Task.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "ToDo Task.xcodeproj"; path = "ToDo Task/ToDo Task.xcodeproj"; sourceTree = SOURCE_ROOT; };
-		E55B041E2F185D5F00B357DB /* ToDo Task.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "ToDo Task.xcodeproj"; sourceTree = "<group>"; };
 		E59F94EE2F0E00D700DB9C68 /* ToDo TaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ToDo TaskUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -68,20 +66,6 @@
 			children = (
 				E53EFE222EE9111800A9709F /* ToDo Task.app */,
 				E59F94EE2F0E00D700DB9C68 /* ToDo TaskUITests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E540C1102F17414900E16025 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E55B04212F185D5F00B357DB /* Products */ = {
-			isa = PBXGroup;
-			children = (
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -169,16 +153,6 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E53EFE232EE9111800A9709F /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = E540C1102F17414900E16025 /* Products */;
-					ProjectRef = E540C10D2F17414800E16025 /* ToDo Task.xcodeproj */;
-				},
-				{
-					ProductGroup = E55B04212F185D5F00B357DB /* Products */;
-					ProjectRef = E55B041E2F185D5F00B357DB /* ToDo Task.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				E53EFE212EE9111800A9709F /* ToDo Task */,
