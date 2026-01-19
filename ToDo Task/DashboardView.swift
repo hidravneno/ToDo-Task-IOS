@@ -68,6 +68,7 @@ struct DashboardView: View {
                                     .clipShape(Capsule())
                             }
                         }
+                        .accessibilityIdentifier("groupRow_\(group.title)")
                     }
                 }
             }
@@ -98,6 +99,7 @@ struct DashboardView: View {
                             }
                         }
                     }
+                    .accessibilityIdentifier("addGroupButton")
                 }
                 
                 ToolbarItem(placement: .primaryAction) {
@@ -431,7 +433,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Version")
                         Spacer()
-                        Text("1.0.0")
+                        Text("2.0.0")
                             .foregroundStyle(.secondary)
                     }
                 }

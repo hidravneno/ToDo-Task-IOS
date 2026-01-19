@@ -34,6 +34,7 @@ struct TaskGroupDetailView: View {
                             .font(culturalConfig.preferredFont)
                             .strikethrough(task.isCompleted)
                             .foregroundStyle(task.isCompleted ? .secondary : .primary)
+                            .accessibilityIdentifier("taskTextField_\(task.id)")
                     }
                 }
                 .onDelete { index in
@@ -52,6 +53,7 @@ struct TaskGroupDetailView: View {
                     Label("Add Task", systemImage: "plus")
                 }
                 .tint(culturalConfig.accentColor)
+                .accessibilityIdentifier("addTaskButton")
             }
         }
     }

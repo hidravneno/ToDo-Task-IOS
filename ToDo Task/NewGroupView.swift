@@ -22,6 +22,7 @@ struct NewGroupView: View {
             Form {
                 Section("Group Name") {
                     TextField("Insert the name of your group", text: $groupName)
+                        .accessibilityIdentifier("newGroupNameField")
                 }
                 
                 Section("Select Icon") {
@@ -36,6 +37,7 @@ struct NewGroupView: View {
                                 .onTapGesture {
                                     selectedIcon = icon
                                 }
+                                .accessibilityIdentifier("groupIcon_\(icon)")
                         }
                     }
                     .padding(.vertical)

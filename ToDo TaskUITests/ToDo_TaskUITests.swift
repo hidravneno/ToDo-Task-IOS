@@ -48,4 +48,55 @@ final class ToDo_TaskUITests: XCTestCase {
             }
         }
     }
+    
+    // MARK: 117 - 1
+    
+    func testUserFlow() throws {
+        
+        let professorCard = app.buttons["profileCard_Professor"] // GIVEN pre existing data
+        XCTAssertTrue(professorCard.waitForExistence(timeout: 5), "The profile of professor should exist")
+        professorCard.tap()
+        
+        let addGroupButton = app.buttons["addGroupButton"]
+        XCTAssertTrue(addGroupButton.waitForExistence(timeout: 5) , "The add button should be visible on the dashboard")
+        addGroupButton.tap()
+        
+        let groupNameField = app.textFields["newGroupNameField"]
+        XCTAssertTrue(groupNameField.waitForExistence(timeout: 2), "The Group text field should be present")
+        groupNameField.tap()
+        groupNameField.typeText("Testing Project")
+        
+    // Dismiss Keyboard scenario
+        
+        if app.keyboards.buttons["Return"].exists { // if the simulator shows the keyboard
+            app.keyboards.buttons["Return"].tap() // tap return to hide it after I finished typing
+        } else {
+            app.navigationBars["New Group Creator"].tap() // if NO keyboard shows (TODO: add accesibillity ID)
+        }
+        
+        let iconButton = app.buttons["groupIcon_bookmark.fill"]
+        if iconButton.exists {
+            iconButton.tap()
+        }
+        
+        let saveGroupButton = app.buttons["saveGroupButton"] // ID
+        XCTAssertTrue(saveGroupButton.isHittable, "The save button is available")
+        saveGroupButton.tap()
+
+        let newGroupRow = app.buttons["groupRow_Testing Project"]
+        XCTAssertTrue(newGroupRow.waitForExistence(timeout: 5), "The Testing Project group should be visible")
+        newGroupRow.tap()
+
+        let addTaskButton = app.buttons["addTaskButton"]
+        XCTAssertTrue(addTaskButton.waitForExistence(timeout: 5), "The add task btn should be visible")
+        addTaskButton.tap()
+
+        let taskTextField = app.textFields.firstMatch
+        taskTextField.tap()
+        taskTextField.typeText("Finish UI Test")
+        
+    }
 }
+
+
+

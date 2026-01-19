@@ -47,9 +47,9 @@ struct ContentView: View {
                             ForEach($profiles) { $profile in
                                 NavigationLink(value: profile.id) {
                                     ProfileCardView(profile: profile)
+                                        .accessibilityIdentifier("profileCard_\(profile.name)")
                                 }
                                 .buttonStyle(PlainButtonStyle())
-                                .accessibilityIdentifier("profileCard_\(profile.name)")
                             }
                             
                             // Add profile button
