@@ -105,6 +105,16 @@ final class ToDo_TaskUITests: XCTestCase {
         taskTextField.typeText("Finish UI Test")
         
     }
+    
+    
+    /* Feature: Add priority levels to tasks */
+    
+    
+    func testTaskHasPriority() {
+        let task = Task(name: "Complete Homework")
+        task.priority = .high
+        XCTAssertEqual(task.priority, .high)
+    
 }
 
 
