@@ -11,14 +11,14 @@ struct TaskGroupDetailView: View {
     @Binding var groups: TaskGroup
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.culturalConfig) var culturalConfig
-
+    
     var body: some View {
         VStack {
             if sizeClass == .regular {
                 GroupStatsView(tasks: groups.tasks)
                     .padding(.top)
             }
-
+            
             List {
                 ForEach($groups.tasks) { $task in
                     HStack {
@@ -29,11 +29,11 @@ struct TaskGroupDetailView: View {
                                     task.isCompleted.toggle()
                                 }
                             }
-
+                        
                         TextField("Task Title", text: $task.title)
                             .font(culturalConfig.preferredFont)
                             .strikethrough(task.isCompleted)
-                            .foregroundStyle(task.isCompleted ? .secondary : .primary)
+                            .foregroundColor(task.isOverdue && !task.isCompleted ? .red : .primary)
                             .accessibilityIdentifier("taskTextField_\(task.id)")
                         
                         DatePicker("", selection: Binding(
@@ -42,6 +42,8 @@ struct TaskGroupDetailView: View {
                         ), displayedComponents: .date)
                         .labelsHidden()
                         .frame(width: 100)
+                        .tint(task.isOverdue ? .red : culturalConfig.accentColor)
+                        .background(task.isOverdue ? Color.red.opacity(0.1) : Color.clear)
                         .accessibilityIdentifier("taskDatePicker_\(task.id)")
                     }
                 }
