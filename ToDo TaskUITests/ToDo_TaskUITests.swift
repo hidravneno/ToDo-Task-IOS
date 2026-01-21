@@ -52,7 +52,16 @@ final class ToDo_TaskUITests: XCTestCase {
     // MARK: 117 - 1
     
     func testUserFlow() throws {
+        app.launchArguments = ["-savedProfile", ""]
+        app.launch()
         
+        sleep(1)
+        
+        print("🔍 Available buttons:")
+            app.buttons.allElementsBoundByIndex.forEach { button in
+                print("  - \(button.identifier)")
+            }
+
         let professorCard = app.buttons["profileCard_Professor"] // GIVEN pre existing data
         XCTAssertTrue(professorCard.waitForExistence(timeout: 5), "The profile of professor should exist")
         professorCard.tap()

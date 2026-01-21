@@ -47,6 +47,7 @@ struct NewGroupView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .accessibilityIdentifier("cancelGroupButton")
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
@@ -55,6 +56,7 @@ struct NewGroupView: View {
                         onSave(newGroup)
                         dismiss()
                     }
+                    .accessibilityIdentifier("saveGroupButton")
                 }
             }
         }

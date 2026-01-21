@@ -45,11 +45,13 @@ struct ContentView: View {
 
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach($profiles) { $profile in
-                                NavigationLink(value: profile.id) {
+                                Button {
+                                    path.append(profile.id)
+                                } label: {
                                     ProfileCardView(profile: profile)
-                                        .accessibilityIdentifier("profileCard_\(profile.name)")
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                                .accessibilityIdentifier("profileCard_\(profile.name)")
                             }
                             
                             // Add profile button
@@ -178,6 +180,12 @@ struct ContentView: View {
     }
 
     func loadData() {
+        if ProcessInfo.processInfo.arguments.contains("-RESET_USERDEFAULTS") {
+            UserDefaults.standard.removeObject(forKey: saveKey)
+            profiles = Profile.sample
+            return
+        }
+        
         if let savedData = UserDefaults.standard.data(forKey: saveKey),
            let decodedProfiles = try? JSONDecoder().decode([Profile].self, from: savedData) {
             profiles = decodedProfiles

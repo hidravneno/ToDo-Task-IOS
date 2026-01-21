@@ -35,6 +35,14 @@ struct TaskGroupDetailView: View {
                             .strikethrough(task.isCompleted)
                             .foregroundStyle(task.isCompleted ? .secondary : .primary)
                             .accessibilityIdentifier("taskTextField_\(task.id)")
+                        
+                        DatePicker("", selection: Binding(
+                            get: { task.dueDate ?? Date() },
+                            set: { task.dueDate = $0 }
+                        ), displayedComponents: .date)
+                        .labelsHidden()
+                        .frame(width: 100)
+                        .accessibilityIdentifier("taskDatePicker_\(task.id)")
                     }
                 }
                 .onDelete { index in
@@ -47,8 +55,7 @@ struct TaskGroupDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     withAnimation {
-                        groups.tasks.append(TaskItem(title: ""))
-                    }
+                        groups.tasks.append(TaskItem(title: "", dueDate: nil))                    }
                 } label: {
                     Label("Add Task", systemImage: "plus")
                 }

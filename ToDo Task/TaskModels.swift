@@ -11,6 +11,7 @@ struct TaskItem: Identifiable, Hashable, Codable {
     var id = UUID()
     var title: String
     var isCompleted: Bool = false
+    var dueDate: Date
 }
 
 struct TaskGroup: Identifiable, Hashable, Codable {
