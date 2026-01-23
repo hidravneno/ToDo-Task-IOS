@@ -38,6 +38,18 @@ struct Todo_TaskTests {
     }
     
     
+    /* Feature: Add priority levels to tasks */
+    
+    
+    @Test("Task should have a priority level")
+        func testTaskHasPriority() {
+            var task = TaskItem(title: "Complete Homework")
+            
+            task.priority = .high
+            
+            // Assert: Verificar que la prioridad es alta
+            #expect(task.priority == .high, "Task priority should be high")
+        }
     }
     
     

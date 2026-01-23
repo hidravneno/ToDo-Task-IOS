@@ -8,14 +8,14 @@
 import XCTest
 
 final class ToDo_TaskUITests: XCTestCase {
-
+    
     let app = XCUIApplication()
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-
+        
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
+        
         // In UI tests it's important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
     func testLaunchInEnglish() {
@@ -26,11 +26,11 @@ final class ToDo_TaskUITests: XCTestCase {
         XCTAssertTrue(header.exists, "The english header of 'Select the working profile' is not found")
     }
     func testLaunchInSpanish() {
-            app.launchArguments = ["-AppleLanguages", "(es)"] // set the language
-            app.launch()
-            let header = app.staticTexts["Seleccione el perfil de trabajo"]
-            XCTAssertTrue(header.exists, "The spanish header of 'Select the working profile' in spanish is not found")
-        }
+        app.launchArguments = ["-AppleLanguages", "(es)"] // set the language
+        app.launch()
+        let header = app.staticTexts["Seleccione el perfil de trabajo"]
+        XCTAssertTrue(header.exists, "The spanish header of 'Select the working profile' in spanish is not found")
+    }
     func testNewGroupCreationIcons() {
         app.launchArguments = ["-AppleLanguages", "(en)"]
         app.launch()
@@ -58,10 +58,10 @@ final class ToDo_TaskUITests: XCTestCase {
         sleep(1)
         
         print("🔍 Available buttons:")
-            app.buttons.allElementsBoundByIndex.forEach { button in
-                print("  - \(button.identifier)")
-            }
-
+        app.buttons.allElementsBoundByIndex.forEach { button in
+            print("  - \(button.identifier)")
+        }
+        
         let professorCard = app.buttons["profileCard_Professor"] // GIVEN pre existing data
         XCTAssertTrue(professorCard.waitForExistence(timeout: 5), "The profile of professor should exist")
         professorCard.tap()
@@ -75,7 +75,7 @@ final class ToDo_TaskUITests: XCTestCase {
         groupNameField.tap()
         groupNameField.typeText("Testing Project")
         
-    // Dismiss Keyboard scenario
+        // Dismiss Keyboard scenario
         
         if app.keyboards.buttons["Return"].exists { // if the simulator shows the keyboard
             app.keyboards.buttons["Return"].tap() // tap return to hide it after I finished typing
@@ -91,15 +91,15 @@ final class ToDo_TaskUITests: XCTestCase {
         let saveGroupButton = app.buttons["saveGroupButton"] // ID
         XCTAssertTrue(saveGroupButton.isHittable, "The save button is available")
         saveGroupButton.tap()
-
+        
         let newGroupRow = app.buttons["groupRow_Testing Project"]
         XCTAssertTrue(newGroupRow.waitForExistence(timeout: 5), "The Testing Project group should be visible")
         newGroupRow.tap()
-
+        
         let addTaskButton = app.buttons["addTaskButton"]
         XCTAssertTrue(addTaskButton.waitForExistence(timeout: 5), "The add task btn should be visible")
         addTaskButton.tap()
-
+        
         let taskTextField = app.textFields.firstMatch
         taskTextField.tap()
         taskTextField.typeText("Finish UI Test")
@@ -107,15 +107,8 @@ final class ToDo_TaskUITests: XCTestCase {
     }
     
     
-    /* Feature: Add priority levels to tasks */
     
-    
-    func testTaskHasPriority() {
-        let task = Task(name: "Complete Homework")
-        task.priority = .high
-        XCTAssertEqual(task.priority, .high)
-    
-}
+    }
 
 
 
