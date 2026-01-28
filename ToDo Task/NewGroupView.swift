@@ -14,7 +14,6 @@ struct NewGroupView: View {
     
     let icons = ["list.bullet", "bookmark.fill", "graduationcap.fill", "cart.fill", "house.fill", "heart.fill", "star.fill", "flag.fill"]
     
-    // Recuerda: TaskGroup debe ser un struct definido en tu proyecto
     var onSave: (TaskGroup) -> Void
     
     var body: some View {

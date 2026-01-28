@@ -108,7 +108,22 @@ final class ToDo_TaskUITests: XCTestCase {
     
     
     
+    
+    
+    
+    func testAddTaskButton() throws {
+        let firstProfile = app.buttons.matching(identifier: "profileCard_Professor").firstMatch
+        XCTAssertTrue(firstProfile.waitForExistence(timeout: 5))
+        firstProfile.tap()
+        
+        let firstGroup = app.buttons.matching(identifier: "groupRow_Groceries").firstMatch
+        XCTAssertTrue(firstGroup.waitForExistence(timeout: 5))
+        firstGroup.tap()
+        
+        let addButton = app.buttons["addNewTasksButtons"]
+        XCTAssertTrue(addButton.exists, "The add button should be accessible")
+        addButton.tap()
     }
-
+}
 
 

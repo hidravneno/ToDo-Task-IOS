@@ -47,7 +47,7 @@ struct Todo_TaskTests {
             
             task.priority = .high
             
-            // Assert: Verificar que la prioridad es alta
+            // Assert: Verifi it's high
             #expect(task.priority == .high, "Task priority should be high")
         }
     }
