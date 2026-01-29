@@ -23,7 +23,7 @@ jobs:
       - name: Run UI Tests
         run: |
           xcodebuild test \
-            -project "ToDo Task.xcodeproj" \
+            -project "ToDo Task/ToDo Task.xcodeproj" \
             -scheme "ToDo Task" \
-            -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation)' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
             -only-testing:ToDo\ TaskUITests
